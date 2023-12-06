@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+input:focus {
+    outline: none !important;
+    /* Ensures the outline is removed on focus */
+    caret-color: purple;
+    /* Purple cursor */
+    animation: blink-animation 1s steps(5, start) infinite;
+}
+
+@keyframes blink-animation {
+    to {
+        visibility: hidden;
+    }
+}
