@@ -59,9 +59,9 @@ function SearchBar() {
     //   <div className="typing-demo">{phrases[currentPhraseIndex]}</div>
     // </div>
 
-    <div className="flex text-black">
+    <div className="flex rounded border border-blue-900 p-1 text-black">
       <Select value={selectedAction} onValueChange={setSelectedAction}>
-        <SelectTrigger className="w-[180px] border-none bg-transparent text-2xl font-bold">
+        <SelectTrigger className="w-[180px] border-none bg-blue-300 text-2xl font-bold">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -82,7 +82,7 @@ function SearchBar() {
             value={selectedSubAction}
             onValueChange={setSelectedSubAction}
           >
-            <SelectTrigger className="w-[180px] border-none bg-transparent text-2xl font-bold">
+            <SelectTrigger className="w-[180px] border-none bg-blue-500 text-2xl font-bold">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -110,7 +110,7 @@ function SearchBar() {
         </>
       ) : selectedAction == "track" ? (
         <Select value={selectedSubAction} onValueChange={setSelectedSubAction}>
-          <SelectTrigger className="w-[180px] border-none bg-transparent text-2xl font-bold">
+          <SelectTrigger className="w-[180px] border-none bg-blue-500 text-2xl font-bold">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
