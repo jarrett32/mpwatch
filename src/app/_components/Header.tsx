@@ -6,7 +6,7 @@ const Header = async () => {
   const session = await getServerAuthSession();
 
   return (
-    <div className="flex justify-between text-black">
+    <div className="flex justify-between text-white">
       <h1 className="p-4 text-6xl font-bold">MarketplaceWatch</h1>
 
       <div className="flex flex-col items-center justify-center gap-4 p-4 text-white">

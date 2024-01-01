@@ -59,9 +59,9 @@ function SearchBar() {
     //   <div className="typing-demo">{phrases[currentPhraseIndex]}</div>
     // </div>
 
-    <div className="flex rounded border border-blue-900 p-1 text-black">
+    <div className="flex p-1 text-white">
       <Select value={selectedAction} onValueChange={setSelectedAction}>
-        <SelectTrigger className="w-[180px] border-none bg-blue-300 text-2xl font-bold">
+        <SelectTrigger className="w-[180px] border-none bg-blue-900 text-2xl font-bold">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -74,7 +74,7 @@ function SearchBar() {
       <Input
         className="w-[300px] border-none bg-transparent text-2xl font-bold focus:border-none active:border-none"
         type="text"
-        placeholder="Keywords here..."
+        placeholder="Item..."
       />
       {selectedAction == "search" ? (
         <>
@@ -82,7 +82,7 @@ function SearchBar() {
             value={selectedSubAction}
             onValueChange={setSelectedSubAction}
           >
-            <SelectTrigger className="w-[180px] border-none bg-blue-500 text-2xl font-bold">
+            <SelectTrigger className="w-[180px] border-none bg-blue-800 text-2xl font-bold">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -109,18 +109,24 @@ function SearchBar() {
           />
         </>
       ) : selectedAction == "track" ? (
-        <Select value={selectedSubAction} onValueChange={setSelectedSubAction}>
-          <SelectTrigger className="w-[180px] border-none bg-blue-500 text-2xl font-bold">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="lowest">Lowest</SelectItem>
-              <SelectItem value="track">Between</SelectItem>
-              <SelectItem value="track">Greater Than</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <>
+          <Select
+            value={selectedSubAction}
+            onValueChange={setSelectedSubAction}
+          >
+            <SelectTrigger className="w-[180px] border-none bg-blue-500 text-2xl font-bold">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="lowest">Lowest</SelectItem>
+                <SelectItem value="average">Average</SelectItem>
+                <SelectItem value="highest">Highest</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <div className="mx-4 p-1 text-2xl font-bold">Prices</div>
+        </>
       ) : null}
     </div>
   );
