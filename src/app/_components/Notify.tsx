@@ -20,6 +20,24 @@ const Notify = () => {
   const [text, setText] = useState("");
 
   useEffect(() => {
+    console.log({
+      notfiyEnabled,
+      notificationPeriod,
+      emailEnabled,
+      email,
+      textEnabled,
+      text,
+    });
+  }, [
+    notfiyEnabled,
+    notificationPeriod,
+    emailEnabled,
+    email,
+    textEnabled,
+    text,
+  ]);
+
+  useEffect(() => {
     if (!notfiyEnabled) {
       setEmailEnabled(false);
       setTextEnabled(false);
