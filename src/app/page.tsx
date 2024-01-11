@@ -6,6 +6,7 @@ import { api } from "~/trpc/server";
 import Header from "./_components/Header";
 import Notify from "./_components/Notify";
 import SearchBar from "./_components/SearchBar";
+import Submit from "./_components/Submit";
 
 export default async function Home() {
   const hello = await api.post.hello.query({ text: "from tRPC" });
@@ -22,6 +23,8 @@ export default async function Home() {
             <SearchBar />
             <div className="p-2"></div>
             <Notify />
+            <div className="p-4"></div>
+            <Submit />
           </div>
 
           <CrudShowcase />

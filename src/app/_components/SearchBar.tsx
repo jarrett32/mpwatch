@@ -1,6 +1,7 @@
 "use client";
 import { CaretDownIcon, CheckIcon } from "@radix-ui/react-icons";
 import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import "../../styles/Searchbar.css";
 import { Button } from "./ui/button";
 
@@ -14,6 +15,14 @@ import {
   SelectValue,
 } from "./ui/select";
 
+import {
+  setItem,
+  setSelectedAction,
+  setSelectedCity,
+  setSelectedPrice,
+  setSelectedSubAction,
+  setSelectedWhere,
+} from "~/store/query";
 import { City } from "../lib/typings.d";
 import { cn } from "../lib/utils";
 import {
@@ -26,42 +35,18 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 function SearchBar() {
-  // const phrases = [
-  //   "Search for new electronics below $200...",
-  //   "Find deals for books from $10 to $30...",
-  //   "Track prices of cameras for 60 days...",
-  //   "Search for vintage clothing under $100...",
-  //   "Find deals for new shoes $30 to $100...",
-  //   "Track laptop prices for next 30 days...",
-  // ];
-  // const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
-
-  // useEffect(() => {
-  //   const changePhrase = () => {
-  //     setCurrentPhraseIndex((prevIndex) => (prevIndex + 1) % phrases.length);
-  //   };
-
-  //   const typingDuration = 4;
-  //   const deletingDuration = 2;
-  //   const totalDuration = (typingDuration + deletingDuration) * 1000; // milliseconds
-
-  //   const interval = setInterval(changePhrase, totalDuration);
-
-  //   return () => clearInterval(interval);
-  // }, []);
-
-  const [selectedAction, setSelectedAction] = useState("search");
-  const [item, setItem] = useState("");
-  const [selectedSubAction, setSelectedSubAction] = useState("lt");
-  const [selectedPrice, setSelectedPrice] = useState("");
+  const dispatch = useDispatch();
+  const {
+    selectedAction,
+    item,
+    selectedSubAction,
+    selectedPrice,
+    selectedWhere,
+    selectedCity,
+  } = useSelector((state: any) => state.query);
 
   const [cities, setCities] = useState([]);
   const [filteredCities, setFilteredCities] = useState([]);
-  const [selectedCity, setSelectedCity] = useState<City>({
-    name: "",
-    country: "",
-  });
-  const [selectedWhere, setSelectedWhere] = useState("in");
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -70,9 +55,34 @@ function SearchBar() {
       item,
       selectedSubAction,
       selectedPrice,
+      selectedWhere,
       selectedCity,
     });
-  }, [selectedAction, item, selectedSubAction, selectedPrice, selectedCity]);
+  }, [
+    selectedAction,
+    item,
+    selectedSubAction,
+    selectedPrice,
+    selectedWhere,
+    selectedCity,
+  ]);
+
+  const handleSelectedAction = (value: string) => {
+    dispatch(setSelectedAction(value));
+  };
+
+  const handleSelectedSubAction = (value: string) => {
+    dispatch(setSelectedSubAction(value));
+  };
+
+  const handleSelectedWhere = (value: string) => {
+    dispatch(setSelectedWhere(value));
+  };
+
+  const handleSelectedCity = (name?: string, lat?: number, lng?: number) => {
+    const city = { name: name, lat: lat, lng: lng };
+    dispatch(setSelectedCity(city));
+  };
 
   useEffect(() => {
     const filtered = cities
@@ -81,7 +91,7 @@ function SearchBar() {
           selectedCity?.name &&
           city.name &&
           city.name.toLowerCase().includes(selectedCity.name.toLowerCase()),
-      )
+      ) //TODO: Filter duplicates
       .slice(0, 10);
     setFilteredCities(filtered);
   }, [selectedCity, cities]);
@@ -104,9 +114,9 @@ function SearchBar() {
 
   useEffect(() => {
     if (selectedAction == "search") {
-      setSelectedSubAction("lt");
+      dispatch(setSelectedSubAction("lt"));
     } else if (selectedAction == "track") {
-      setSelectedSubAction("lowest");
+      dispatch(setSelectedSubAction("lowest"));
     }
   }, [selectedAction]);
 
@@ -116,7 +126,7 @@ function SearchBar() {
     // </div>
 
     <div className="flex p-1 text-white">
-      <Select value={selectedAction} onValueChange={setSelectedAction}>
+      <Select value={selectedAction} onValueChange={handleSelectedAction}>
         <SelectTrigger className="w-auto border-none bg-blue-900 text-2xl font-bold">
           <SelectValue />
         </SelectTrigger>
@@ -133,14 +143,14 @@ function SearchBar() {
         placeholder="Item..."
         value={item}
         onChange={(e) => {
-          setItem(e.target.value);
+          dispatch(setItem(e.target.value));
         }}
       />
       {selectedAction == "search" ? (
         <>
           <Select
             value={selectedSubAction}
-            onValueChange={setSelectedSubAction}
+            onValueChange={handleSelectedSubAction}
           >
             <SelectTrigger className="w-[180px] border-none bg-blue-800 text-2xl font-bold">
               <SelectValue />
@@ -161,9 +171,9 @@ function SearchBar() {
             onChange={(e) => {
               const newPrice = "$" + e.target.value.replace(/[^0-9.]/g, "");
               if (newPrice == "$") {
-                setSelectedPrice("");
+                dispatch(setSelectedPrice(""));
               } else {
-                setSelectedPrice(newPrice);
+                dispatch(setSelectedPrice(newPrice));
               }
             }}
           />
@@ -172,7 +182,7 @@ function SearchBar() {
         <>
           <Select
             value={selectedSubAction}
-            onValueChange={setSelectedSubAction}
+            onValueChange={handleSelectedSubAction}
           >
             <SelectTrigger className="w-auto border-none bg-blue-600 text-2xl font-bold">
               <SelectValue />
@@ -188,7 +198,7 @@ function SearchBar() {
           <div className="mx-4 p-1 text-2xl font-bold">Prices</div>
         </>
       ) : null}
-      <Select value={selectedWhere} onValueChange={setSelectedWhere}>
+      <Select value={selectedWhere} onValueChange={handleSelectedWhere}>
         <SelectTrigger className="w-auto border-none bg-blue-500 text-2xl font-bold">
           <SelectValue />
         </SelectTrigger>
@@ -207,10 +217,7 @@ function SearchBar() {
             aria-expanded={open}
             className="w-[200px] justify-between border-none bg-transparent text-white hover:bg-transparent hover:text-white"
           >
-            {selectedCity.name
-              ? cities.find((city: City) => city.name === selectedCity.name)
-                  ?.name
-              : "Find City"}
+            {selectedCity.name ? selectedCity.name : "Find City"}
             <CaretDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -219,20 +226,22 @@ function SearchBar() {
             <CommandInput
               placeholder="Find City"
               onValueChange={(value) =>
-                setSelectedCity({ ...selectedCity, name: value })
+                dispatch(setSelectedCity({ ...selectedCity, name: value }))
               }
             />
             <CommandEmpty>Not found.</CommandEmpty>
             <CommandGroup>
               {filteredCities.map((city: City) => (
                 <CommandItem
-                  key={city.name}
+                  key={city.name + city.lat}
                   value={city.name}
                   onSelect={(currentValue) => {
-                    setSelectedCity(
-                      currentValue === selectedCity.name
-                        ? { name: "", country: "" }
-                        : { ...selectedCity, name: currentValue },
+                    dispatch(
+                      setSelectedCity(
+                        currentValue === selectedCity.name
+                          ? { name: "", country: "" }
+                          : { ...selectedCity, name: currentValue },
+                      ),
                     );
                     setOpen(false);
                   }}

@@ -3,6 +3,8 @@ import "~/styles/globals.css";
 import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
 
+import { Provider } from "react-redux";
+import { store } from "~/store/query";
 import { TRPCReactProvider } from "~/trpc/react";
 
 const inter = Inter({

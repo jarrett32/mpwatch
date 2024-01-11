@@ -1,7 +1,7 @@
 export type City = {
-  name?: string;
+  name: string;
   country?: string;
   state?: string;
-  lat?: number;
-  lng?: number;
+  lat: number;
+  lng: number;
 };

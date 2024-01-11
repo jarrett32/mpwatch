@@ -5,7 +5,9 @@ import { loggerLink, unstable_httpBatchStreamLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import { useState } from "react";
 
+import { Provider } from "react-redux";
 import { type AppRouter } from "~/server/api/root";
+import { store } from "~/store/query";
 import { getUrl, transformer } from "./shared";
 
 export const api = createTRPCReact<AppRouter>();
@@ -35,13 +37,13 @@ export function TRPCReactProvider(props: {
           },
         }),
       ],
-    })
+    }),
   );
 
   return (
     <QueryClientProvider client={queryClient}>
       <api.Provider client={trpcClient} queryClient={queryClient}>
-        {props.children}
+        <Provider store={store}>{props.children}</Provider>
       </api.Provider>
     </QueryClientProvider>
   );
