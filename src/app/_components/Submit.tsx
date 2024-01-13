@@ -3,6 +3,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { api } from "~/trpc/react";
 import { QueryResult } from "../lib/typings.d";
+import QueryTable from "./QueryTable";
 import { Button } from "./ui/button";
 
 type ApiResult = {
@@ -69,14 +70,7 @@ const Submit = () => {
 
       {marketItems && (
         <div className="mx-auto w-full max-w-3xl">
-          <ul>
-            {Array.isArray(marketItems.result) &&
-              marketItems.result.map((item) => (
-                <li key={item.item}>
-                  {item.item} - {item.price}
-                </li>
-              ))}
-          </ul>
+          <QueryTable data={marketItems.result} />
         </div>
       )}
     </div>
