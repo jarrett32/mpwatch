@@ -1,7 +1,13 @@
 "use client";
 import React from "react";
 import { useSelector } from "react-redux";
+import { api } from "~/trpc/react";
+import { QueryResult } from "../lib/typings.d";
 import { Button } from "./ui/button";
+
+type ApiResult = {
+  result: QueryResult[];
+};
 
 const Submit = () => {
   const {
@@ -12,6 +18,16 @@ const Submit = () => {
     selectedWhere,
     selectedCity,
   } = useSelector((state: any) => state.query);
+
+  const { data: marketItems, isLoading } = api.query.getMarketItems.useQuery<
+    boolean,
+    ApiResult
+  >(
+    { item },
+    // {
+    //   enabled: item.length > 0, // This prevents the query from running until there is an item
+    // },
+  );
 
   const disableSubmit = () => {
     if (
@@ -49,6 +65,20 @@ const Submit = () => {
       >
         submit
       </Button>
+      <div className="p-4"></div>
+
+      {marketItems && (
+        <div className="mx-auto w-full max-w-3xl">
+          <ul>
+            {Array.isArray(marketItems.result) &&
+              marketItems.result.map((item) => (
+                <li key={item.item}>
+                  {item.item} - {item.price}
+                </li>
+              ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
