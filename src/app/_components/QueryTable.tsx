@@ -1,7 +1,6 @@
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -12,6 +11,21 @@ import { QueryResult } from "../lib/typings.d";
 export function QueryTable({ data }: { data: QueryResult[] }) {
   console.log("QueryTable", data);
 
+  const marketColor = (market: string) => {
+    switch (market) {
+      case "offerup":
+        return "text-green-500";
+      case "facebook":
+        return "text-blue-500";
+      default:
+        return "";
+    }
+  };
+
+  const routeToLink = (link: string) => {
+    window.open(link, "_blank");
+  };
+
   if (!data) {
     return <div>loading...</div>;
   }
@@ -19,21 +33,28 @@ export function QueryTable({ data }: { data: QueryResult[] }) {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[100px]">Item</TableHead>
-          <TableHead>Price</TableHead>
+          <TableHead className="w-[300px]">Item</TableHead>
+          <TableHead>Price Listed</TableHead>
           <TableHead>City</TableHead>
           <TableHead>Market</TableHead>
-          <TableHead className="w-[160px]">Link</TableHead>
+          <TableHead className="w-[240px]">Link</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {data.map((q) => (
-          <TableRow key={q.item + q.link}>
+          <TableRow
+            className="cursor-pointer"
+            onClick={() => routeToLink(q.link)}
+          >
             <TableCell className="font-medium">{q.item}</TableCell>
-            <TableCell>{q.price ? q.price : ""}</TableCell>
-            <TableCell>{q.City?.name ? q.City.name : ""}</TableCell>
-            <TableCell>{q.market}</TableCell>
-            <TableCell>{q.link}</TableCell>
+            <TableCell className="font-bold">
+              ${q.price ? q.price : ""}
+            </TableCell>
+            <TableCell>{q.city?.name ? q.city.name : ""}</TableCell>
+            <TableCell className={`${marketColor(q.market)}`}>
+              {q.market}
+            </TableCell>
+            <TableCell className="text-ellipsis underline">{q.link}</TableCell>
           </TableRow>
         ))}
       </TableBody>

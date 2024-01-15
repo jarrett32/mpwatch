@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { useSelector } from "react-redux";
+import { set } from "zod";
 import { api } from "~/trpc/react";
 import { QueryResult } from "../lib/typings.d";
 import QueryTable from "./QueryTable";
@@ -20,15 +21,33 @@ const Submit = () => {
     selectedCity,
   } = useSelector((state: any) => state.query);
 
-  const { data: marketItems, isLoading } = api.query.getMarketItems.useQuery<
-    boolean,
-    ApiResult
-  >(
-    { item },
-    // {
-    //   enabled: item.length > 0, // This prevents the query from running until there is an item
-    // },
-  );
+  // const { data: marketItems, isLoading } = api.query.getMarketItems.useQuery<
+  //   boolean,
+  //   ApiResult
+  // >(
+  //   { item },
+  //   // {
+  //   //   enabled: item.length > 0, // This prevents the query from running until there is an item
+  //   // },
+  // );
+  const [marketItems, setMarketItems] = React.useState<any>([]);
+
+  const handleSubmit = () => {
+    console.log("submitting...", {
+      selectedAction,
+      item,
+      selectedSubAction,
+      selectedPrice,
+      selectedWhere,
+      selectedCity,
+    });
+
+    const { data: marketItems, isLoading } = api.query.getMarketItems.useQuery({
+      item,
+    });
+    console.log("marketItems", marketItems);
+    setMarketItems(marketItems);
+  };
 
   const disableSubmit = () => {
     if (
@@ -45,17 +64,6 @@ const Submit = () => {
     return false;
   };
 
-  const handleSubmit = () => {
-    console.log("submitting...", {
-      selectedAction,
-      item,
-      selectedSubAction,
-      selectedPrice,
-      selectedWhere,
-      selectedCity,
-    });
-  };
-
   return (
     <div>
       <Button
@@ -69,7 +77,7 @@ const Submit = () => {
       <div className="p-4"></div>
 
       {marketItems && (
-        <div className="mx-auto w-full max-w-3xl">
+        <div className="mx-auto w-full max-w-5xl">
           <QueryTable data={marketItems.result} />
         </div>
       )}

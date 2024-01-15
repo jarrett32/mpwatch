@@ -52,4 +52,6 @@ export const queryRouter = createTRPCRouter({
         resolve({ result: [queryItemOne] });
       });
     }),
+
+  // Todo getMarketDealsHome
 });

@@ -9,7 +9,7 @@ export type City = {
 export type QueryResult = {
   item: string;
   price?: string;
-  City?: City;
+  city?: City;
   market?: "offerup" | "letgo" | "facebook";
   action?: "buy" | "sell";
   link?: string;
