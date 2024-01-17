@@ -82,7 +82,7 @@ function SearchBar() {
 
   const handleSelectedCity = (name?: string, lat?: number, lng?: number) => {
     const city = { name: name, lat: lat, lng: lng };
-    dispatch(setSelectedCity(city));
+    // dispatch(setSelectedCity(city));
   };
 
   useEffect(() => {

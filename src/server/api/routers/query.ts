@@ -10,16 +10,17 @@ import {
 
 export const queryRouter = createTRPCRouter({
   getMarketItems: publicProcedure
-    .input(z.object({ item: z.string() })) // Validate input
+    .input(z.object({ item: z.string() }))
     .query(({ input }) => {
       return new Promise((resolve, reject) => {
         const process = spawn("python3", [
           "scripts/offerup_scraper.py",
           input.item,
         ]);
-        let dataChunks = [];
 
-        process.stdout.on("data", (chunk) => {
+        let dataChunks: Buffer[] = [];
+
+        process.stdout.on("data", (chunk: Buffer) => {
           dataChunks.push(chunk);
         });
 

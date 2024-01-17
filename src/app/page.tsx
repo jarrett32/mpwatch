@@ -18,7 +18,7 @@ export default async function Home() {
             </p> */}
             <SearchBar />
             <div className="p-2"></div>
-            <Notify />
+            {/* <Notify /> */}
             <div className="p-4"></div>
             <Submit />
           </div>

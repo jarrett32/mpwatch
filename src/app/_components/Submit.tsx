@@ -1,9 +1,13 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { api } from "~/trpc/react";
 import QueryTable from "./QueryTable";
 import { Button } from "./ui/button";
+
+interface getMarketItemsResponse {
+  result: any[];
+}
 
 const Submit = () => {
   const {
@@ -15,10 +19,10 @@ const Submit = () => {
     selectedCity,
   } = useSelector((state: any) => state.query);
 
-  const [marketItems, setMarketItems] = React.useState(null);
+  const [marketItems, setMarketItems] = useState<any[] | null>(null);
 
   const { data, isLoading, isError, refetch } =
-    api.query.getMarketItems.useQuery(
+    api.query.getMarketItems.useQuery<getMarketItemsResponse>(
       { item },
       {
         enabled: false, // This prevents the query from auto-running
@@ -52,7 +56,7 @@ const Submit = () => {
     <div>
       <Button
         variant="outline"
-        className="ml-16 border-green-500 bg-transparent px-16 text-green-500 hover:bg-blue-700 hover:bg-opacity-50 hover:text-white"
+        className="border-blue-900 border-opacity-30 bg-transparent px-16 text-white hover:bg-blue-900 hover:bg-opacity-30 hover:text-white"
         onClick={handleSubmit}
         disabled={disableSubmit()}
       >
