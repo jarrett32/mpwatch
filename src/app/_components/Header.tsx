@@ -1,15 +1,14 @@
-import Link from "next/link";
 import React from "react";
-import { getServerAuthSession } from "~/server/auth";
+// import { getServerAuthSession } from "~/server/auth";
 
 const Header = async () => {
-  const session = await getServerAuthSession();
+  // const session = await getServerAuthSession();
 
   return (
     <div className="flex justify-between text-white">
       <h1 className="p-4 text-6xl font-bold">MarketplaceWatch</h1>
 
-      <div className="flex flex-col items-center justify-center gap-4 p-4 text-white">
+      {/* <div className="flex flex-col items-center justify-center gap-4 p-4 text-white">
         <p className="text-center text-2xl">
           {session && <span>Logged in as {session.user?.name}</span>}
         </p>
@@ -19,7 +18,7 @@ const Header = async () => {
         >
           {session ? "Sign out" : "Sign in"}
         </Link>
-      </div>
+      </div> */}
     </div>
   );
 };

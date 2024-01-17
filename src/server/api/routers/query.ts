@@ -10,46 +10,31 @@ import {
 
 export const queryRouter = createTRPCRouter({
   getMarketItems: publicProcedure
-    .input(z.object({ item: z.string() })) // Assuming 'item' as input for the Python script
+    .input(z.object({ item: z.string() })) // Validate input
     .query(({ input }) => {
       return new Promise((resolve, reject) => {
-        // Replace 'path/to/your_script.py' with the actual path to your Python script
-        // and ensure 'input.item' is passed correctly to your script
-        // const pythonProcess = spawn("python", [
-        //   "path/to/your_script.py",
-        //   input.item,
-        // ]);
+        const process = spawn("python3", [
+          "scripts/offerup_scraper.py",
+          input.item,
+        ]);
+        let dataChunks = [];
 
-        // let result = "";
+        process.stdout.on("data", (chunk) => {
+          dataChunks.push(chunk);
+        });
 
-        // pythonProcess.stdout.on("data", (data) => {
-        //   result += data.toString();
-        // });
+        process.stdout.on("end", () => {
+          try {
+            const result = JSON.parse(Buffer.concat(dataChunks).toString());
+            resolve({ result });
+          } catch (error) {
+            reject(`Error parsing JSON: ${error.message}`);
+          }
+        });
 
-        // pythonProcess.stderr.on("data", (data) => {
-        //   console.error(`stderr: ${data}`);
-        //   reject(new Error(`Error in Python script execution: ${data}`));
-        // });
-
-        // pythonProcess.on("close", (code) => {
-        //   if (code !== 0) {
-        //     console.log(`Python script exited with code ${code}`);
-        //     reject(new Error(`Python script exited with code ${code}`));
-        //   } else {
-        //     resolve({ result });
-        //   }
-        // });
-        const queryItemOne = {
-          item: "iphone",
-          price: "100",
-          city: {
-            name: "San Diego",
-            country: "USA",
-          },
-          market: "offerup",
-          link: "https://offerup.com/",
-        };
-        resolve({ result: [queryItemOne] });
+        process.stderr.on("data", (data) => {
+          reject(`Error in Python script: ${data.toString()}`);
+        });
       });
     }),
 

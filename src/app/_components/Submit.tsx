@@ -1,15 +1,9 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { set } from "zod";
 import { api } from "~/trpc/react";
-import { QueryResult } from "../lib/typings.d";
 import QueryTable from "./QueryTable";
 import { Button } from "./ui/button";
-
-type ApiResult = {
-  result: QueryResult[];
-};
 
 const Submit = () => {
   const {
@@ -21,48 +15,38 @@ const Submit = () => {
     selectedCity,
   } = useSelector((state: any) => state.query);
 
-  // const { data: marketItems, isLoading } = api.query.getMarketItems.useQuery<
-  //   boolean,
-  //   ApiResult
-  // >(
-  //   { item },
-  //   // {
-  //   //   enabled: item.length > 0, // This prevents the query from running until there is an item
-  //   // },
-  // );
-  const [marketItems, setMarketItems] = React.useState<any>([]);
+  const [marketItems, setMarketItems] = React.useState(null);
 
-  const handleSubmit = () => {
-    console.log("submitting...", {
-      selectedAction,
-      item,
-      selectedSubAction,
-      selectedPrice,
-      selectedWhere,
-      selectedCity,
-    });
+  const { data, isLoading, isError, refetch } =
+    api.query.getMarketItems.useQuery(
+      { item },
+      {
+        enabled: false, // This prevents the query from auto-running
+      },
+    );
 
-    const { data: marketItems, isLoading } = api.query.getMarketItems.useQuery({
-      item,
-    });
-    console.log("marketItems", marketItems);
-    setMarketItems(marketItems);
+  const handleSubmit = async () => {
+    refetch();
   };
 
+  useEffect(() => {
+    if (data && data.result) {
+      setMarketItems(data.result);
+    }
+  }, [data]);
+
   const disableSubmit = () => {
-    if (
-      //TODO: Check for valid inputs
-      selectedAction == "" ||
+    return (
+      selectedAction === "" ||
       item === "" ||
       selectedSubAction === "" ||
       selectedPrice === "" ||
       selectedWhere === "" ||
       selectedCity.name === ""
-    ) {
-      return true;
-    }
-    return false;
+    );
   };
+
+  if (isError) return <div>Error loading data</div>;
 
   return (
     <div>
@@ -72,13 +56,14 @@ const Submit = () => {
         onClick={handleSubmit}
         disabled={disableSubmit()}
       >
-        submit
+        Submit
       </Button>
       <div className="p-4"></div>
 
-      {marketItems && (
+      {isLoading && <div>Loading...</div>}
+      {marketItems && data && (
         <div className="mx-auto w-full max-w-5xl">
-          <QueryTable data={marketItems.result} />
+          <QueryTable data={data.result} />
         </div>
       )}
     </div>
