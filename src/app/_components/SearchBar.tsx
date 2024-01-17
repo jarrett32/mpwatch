@@ -1,5 +1,6 @@
 "use client";
 import { CaretDownIcon, CheckIcon } from "@radix-ui/react-icons";
+import { motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "../../styles/Searchbar.css";
@@ -127,9 +128,16 @@ function SearchBar() {
 
     <div className="flex p-1 text-white">
       <Select value={selectedAction} onValueChange={handleSelectedAction}>
-        <SelectTrigger className="w-auto border-none bg-blue-900 text-2xl font-bold">
-          <SelectValue />
-        </SelectTrigger>
+        <motion.div
+          className="w-auto rounded border-none bg-blue-900 bg-opacity-40 text-2xl font-bold"
+          initial={{ backgroundColor: "rgba(0, 0, 139, .4)" }}
+          whileHover={{ backgroundColor: "rgba(0, 0, 139, 0.2)" }}
+          transition={{ duration: 0.3 }}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+        </motion.div>
         <SelectContent>
           <SelectGroup>
             <SelectItem value="search">Search For</SelectItem>
@@ -138,7 +146,9 @@ function SearchBar() {
         </SelectContent>
       </Select>
       <Input
-        className="w-[300px] border-none bg-transparent text-2xl font-bold focus:border-none active:border-none"
+        className={`w-[300px] animate-pulse border-none bg-transparent text-2xl font-bold focus:border-none active:border-none ${
+          item ? "animate-none" : "animate-pulse"
+        }`}
         type="text"
         placeholder="Item..."
         value={item}
@@ -146,15 +156,22 @@ function SearchBar() {
           dispatch(setItem(e.target.value));
         }}
       />
-      {selectedAction == "search" ? (
+      {selectedAction == "search" && item ? (
         <>
           <Select
             value={selectedSubAction}
             onValueChange={handleSelectedSubAction}
           >
-            <SelectTrigger className="w-[180px] border-none bg-blue-800 text-2xl font-bold">
-              <SelectValue />
-            </SelectTrigger>
+            <motion.div
+              className="w-auto rounded border-none bg-blue-900 bg-opacity-40 text-2xl font-bold"
+              initial={{ backgroundColor: "rgba(0, 0, 139, .4)" }}
+              whileHover={{ backgroundColor: "rgba(0, 0, 139, 0.2)" }}
+              transition={{ duration: 0.3 }}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+            </motion.div>
             <SelectContent>
               <SelectGroup>
                 <SelectItem value="lt">Less Then</SelectItem>
@@ -164,7 +181,9 @@ function SearchBar() {
             </SelectContent>
           </Select>
           <Input
-            className="w-[100px] border-none bg-transparent text-2xl font-bold focus:border-none active:border-none"
+            className={`w-[100px] border-none bg-transparent text-2xl font-bold focus:border-none active:border-none ${
+              selectedPrice ? "animate-none" : "animate-pulse"
+            }`}
             type="text"
             placeholder="$0.00"
             value={selectedPrice}
@@ -178,7 +197,7 @@ function SearchBar() {
             }}
           />
         </>
-      ) : selectedAction == "track" ? (
+      ) : selectedAction == "track" && item ? (
         <>
           <Select
             value={selectedSubAction}
@@ -198,67 +217,82 @@ function SearchBar() {
           <div className="mx-4 p-1 text-2xl font-bold">Prices</div>
         </>
       ) : null}
-      <Select value={selectedWhere} onValueChange={handleSelectedWhere}>
-        <SelectTrigger className="w-auto border-none bg-blue-500 text-2xl font-bold">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectItem value="in">In</SelectItem>
-            <SelectItem value="inplus">In + Shipping</SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className="w-[200px] justify-between border-none bg-transparent text-white hover:bg-transparent hover:text-white"
+      {selectedPrice ? (
+        <Select value={selectedWhere} onValueChange={handleSelectedWhere}>
+          <motion.div
+            className="w-auto rounded border-none bg-blue-900 bg-opacity-40 text-2xl font-bold"
+            initial={{ backgroundColor: "rgba(0, 0, 139, .4)" }}
+            whileHover={{ backgroundColor: "rgba(0, 0, 139, 0.2)" }}
+            transition={{ duration: 0.3 }}
           >
-            {selectedCity.name ? selectedCity.name : "Find City"}
-            <CaretDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0">
-          <Command>
-            <CommandInput
-              placeholder="Find City"
-              onValueChange={(value) =>
-                dispatch(setSelectedCity({ ...selectedCity, name: value }))
-              }
-            />
-            <CommandEmpty>Not found.</CommandEmpty>
-            <CommandGroup>
-              {filteredCities.map((city: City) => (
-                <CommandItem
-                  key={city.name + city.lat}
-                  value={city.name}
-                  onSelect={(currentValue) => {
-                    dispatch(
-                      setSelectedCity(
-                        currentValue === selectedCity.name
-                          ? { name: "", country: "" }
-                          : { ...selectedCity, name: currentValue },
-                      ),
-                    );
-                    setOpen(false);
-                  }}
-                >
-                  <CheckIcon
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      selectedCity === city.name ? "opacity-100" : "opacity-0",
-                    )}
-                  />
-                  {city.name}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </Command>
-        </PopoverContent>
-      </Popover>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+          </motion.div>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="in">In</SelectItem>
+              <SelectItem value="inplus">In + Shipping</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      ) : null}
+      {selectedPrice ? (
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={open}
+              className={`w-[200px] justify-between border-none bg-transparent text-white hover:bg-transparent hover:text-white ${
+                selectedCity.name ? "animate-none" : "animate-pulse"
+              }`}
+            >
+              {selectedCity.name ? selectedCity.name : "Find City"}
+              <CaretDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[200px] p-0">
+            <Command>
+              <CommandInput
+                placeholder="Find City"
+                onValueChange={(value) =>
+                  dispatch(setSelectedCity({ ...selectedCity, name: value }))
+                }
+              />
+              <CommandEmpty>Not found.</CommandEmpty>
+              <CommandGroup>
+                {filteredCities.map((city: City) => (
+                  <CommandItem
+                    key={city.name + city.lat}
+                    value={city.name}
+                    onSelect={(currentValue) => {
+                      dispatch(
+                        setSelectedCity(
+                          currentValue === selectedCity.name
+                            ? { name: "", country: "" }
+                            : { ...selectedCity, name: currentValue },
+                        ),
+                      );
+                      setOpen(false);
+                    }}
+                  >
+                    <CheckIcon
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        selectedCity === city.name
+                          ? "opacity-100"
+                          : "opacity-0",
+                      )}
+                    />
+                    {city.name}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </Command>
+          </PopoverContent>
+        </Popover>
+      ) : null}
     </div>
   );
 }
