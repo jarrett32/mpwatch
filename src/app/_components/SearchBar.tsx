@@ -25,7 +25,7 @@ import {
   setSelectedWhere,
 } from "~/store/query";
 import { City } from "../lib/typings.d";
-import { cn } from "../lib/utils";
+import { cn, getAllCities, getCityFromLL, getLLFromCity } from "../lib/utils";
 import {
   Command,
   CommandEmpty,
@@ -46,8 +46,8 @@ function SearchBar() {
     selectedCity,
   } = useSelector((state: any) => state.query);
 
-  const [cities, setCities] = useState([]);
-  const [filteredCities, setFilteredCities] = useState([]);
+  const [cities, setCities] = useState<string[]>([]);
+  const [filteredCities, setFilteredCities] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -87,25 +87,21 @@ function SearchBar() {
 
   useEffect(() => {
     const filtered = cities
-      .filter(
-        (city: City) =>
-          selectedCity?.name &&
-          city.name &&
-          city.name.toLowerCase().includes(selectedCity.name.toLowerCase()),
-      ) //TODO: Filter duplicates
-      .slice(0, 10);
+      .filter((city) => {
+        return city.toLowerCase().includes(selectedCity.name.toLowerCase());
+      })
+      .map((city) => {
+        const { lat, lng } = getLLFromCity(city);
+        return { name: city, lat, lng };
+      })
+      .slice(0, 5);
+
     setFilteredCities(filtered);
   }, [selectedCity, cities]);
 
   useEffect(() => {
-    fetch("/cities.json")
-      .then((response) => response.json())
-      .then((data) =>
-        setCities(data.filter((city: City) => city.country == "US")),
-      )
-      .catch((error) => console.error("Error loading city data:", error));
-
-    console.log("cities", cities.length);
+    const cities = getAllCities() || [];
+    setCities(cities);
   }, []);
 
   const subActionStates = {
@@ -218,80 +214,65 @@ function SearchBar() {
         </>
       ) : null}
       {selectedPrice ? (
-        <Select value={selectedWhere} onValueChange={handleSelectedWhere}>
-          <motion.div
-            className="w-auto rounded border-none bg-blue-900 bg-opacity-40 text-2xl font-bold"
-            initial={{ backgroundColor: "rgba(0, 0, 139, .4)" }}
-            whileHover={{ backgroundColor: "rgba(0, 0, 139, 0.2)" }}
-            transition={{ duration: 0.3 }}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-          </motion.div>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="in">In</SelectItem>
-              <SelectItem value="inplus">In + Shipping</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      ) : null}
-      {selectedPrice ? (
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              role="combobox"
-              aria-expanded={open}
-              className={`w-[200px] justify-between border-none bg-transparent text-white hover:bg-transparent hover:text-white ${
-                selectedCity.name ? "animate-none" : "animate-pulse"
-              }`}
-            >
-              {selectedCity.name ? selectedCity.name : "Find City"}
-              <CaretDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-[200px] p-0">
-            <Command>
-              <CommandInput
-                placeholder="Find City"
-                onValueChange={(value) =>
-                  dispatch(setSelectedCity({ ...selectedCity, name: value }))
-                }
-              />
-              <CommandEmpty>Not found.</CommandEmpty>
-              <CommandGroup>
-                {filteredCities.map((city: City) => (
-                  <CommandItem
-                    key={city.name + city.lat}
-                    value={city.name}
-                    onSelect={(currentValue) => {
-                      dispatch(
-                        setSelectedCity(
-                          currentValue === selectedCity.name
-                            ? { name: "", country: "" }
-                            : { ...selectedCity, name: currentValue },
-                        ),
-                      );
-                      setOpen(false);
-                    }}
-                  >
-                    <CheckIcon
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        selectedCity === city.name
-                          ? "opacity-100"
-                          : "opacity-0",
-                      )}
-                    />
-                    {city.name}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </Command>
-          </PopoverContent>
-        </Popover>
+        <>
+          <div className="my-auto px-4 text-center text-2xl font-bold text-white">
+            In
+          </div>
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={open}
+                className={`my-auto w-[200px] justify-between border-none bg-transparent text-2xl font-bold text-white hover:bg-transparent hover:text-white ${
+                  selectedCity.name ? "animate-none" : "animate-pulse"
+                }`}
+              >
+                {selectedCity.name ? selectedCity.name : "Find City"}
+                <CaretDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[200px] p-0">
+              <Command>
+                <CommandInput
+                  placeholder="Find City"
+                  onValueChange={(value) =>
+                    dispatch(setSelectedCity({ ...selectedCity, name: value }))
+                  }
+                />
+                <CommandEmpty>Not found.</CommandEmpty>
+                <CommandGroup>
+                  {filteredCities.map((city: City) => (
+                    <CommandItem
+                      key={city.name + city.lat}
+                      value={city.name}
+                      onSelect={(currentValue) => {
+                        dispatch(
+                          setSelectedCity(
+                            currentValue === selectedCity.name
+                              ? { name: "", country: "" }
+                              : { ...selectedCity, name: currentValue },
+                          ),
+                        );
+                        setOpen(false);
+                      }}
+                    >
+                      <CheckIcon
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          selectedCity === city.name
+                            ? "opacity-100"
+                            : "opacity-0",
+                        )}
+                      />
+                      {city.name}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </>
       ) : null}
     </div>
   );

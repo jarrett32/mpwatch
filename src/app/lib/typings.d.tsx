@@ -1,10 +1,19 @@
-export type City = {
-  name: string;
-  country?: string;
-  state?: string;
+export interface City {
   lat: number;
-  lng: number;
-};
+  lon: number;
+}
+
+export interface State {
+  lat: number;
+  lon: number;
+  cities: {
+    [cityName: string]: City;
+  };
+}
+
+export interface CitiesData {
+  [stateName: string]: State;
+}
 
 export type QueryResult = {
   item: string;
