@@ -21,9 +21,16 @@ const Submit = () => {
 
   const [marketItems, setMarketItems] = useState<any[] | null>(null);
 
+  const city = "Los Angeles";
+  const state = "California";
+
+  const [high, setHigh] = useState<number | null>(null);
+  const [low, setLow] = useState<number | null>(null);
+  const [avg, setAvg] = useState<number | null>(null);
+
   const { data, isLoading, isError, refetch } =
     api.query.getMarketItems.useQuery<getMarketItemsResponse>(
-      { item },
+      { item, city, state },
       {
         enabled: false, // This prevents the query from auto-running
       },
@@ -50,6 +57,10 @@ const Submit = () => {
     );
   };
 
+  useEffect(() => {
+    console.log({ data });
+  }, [data]);
+
   if (isError) return <div>Error loading data</div>;
 
   return (
@@ -64,10 +75,9 @@ const Submit = () => {
       </Button>
       <div className="p-4"></div>
 
-      {isLoading && <div>Loading...</div>}
-      {marketItems && data && (
+      {data && (
         <div className="mx-auto w-full max-w-5xl">
-          <QueryTable data={data.result} />
+          <QueryTable data={data} />
         </div>
       )}
     </div>

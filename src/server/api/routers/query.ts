@@ -1,6 +1,6 @@
-import { z } from "zod";
-
+import axios from "axios";
 import { spawn } from "child_process";
+import { z } from "zod";
 
 import {
   createTRPCRouter,
@@ -10,33 +10,21 @@ import {
 
 export const queryRouter = createTRPCRouter({
   getMarketItems: publicProcedure
-    .input(z.object({ item: z.string() }))
-    .query(({ input }) => {
-      return new Promise((resolve, reject) => {
-        const process = spawn("python3", [
-          "scripts/offerup_scraper.py",
-          input.item,
-        ]);
+    .input(z.object({ item: z.string(), city: z.string(), state: z.string() }))
+    .query(async ({ input }) => {
+      try {
+        const url = `${process.env.NEXT_PUBLIC_PYTHON_SERVICE_URL}/search_offerup`;
+        const params = {
+          keyword: input.item,
+          city: input.city,
+          state: input.state,
+        };
 
-        let dataChunks: Buffer[] = [];
-
-        process.stdout.on("data", (chunk: Buffer) => {
-          dataChunks.push(chunk);
-        });
-
-        process.stdout.on("end", () => {
-          try {
-            const result = JSON.parse(Buffer.concat(dataChunks).toString());
-            resolve({ result });
-          } catch (error) {
-            reject(`Error parsing JSON: ${error.message}`);
-          }
-        });
-
-        process.stderr.on("data", (data) => {
-          reject(`Error in Python script: ${data.toString()}`);
-        });
-      });
+        const response = await axios.get(url, { params });
+        return response.data;
+      } catch (error) {
+        throw new Error(`Error in HTTP request: ${error.message}`);
+      }
     }),
 
   // Todo getMarketDealsHome

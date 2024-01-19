@@ -8,9 +8,7 @@ import {
 } from "~/app/_components/ui/table";
 import { QueryResult } from "../lib/typings.d";
 
-export function QueryTable({ data }: { data: QueryResult[] }) {
-  console.log("QueryTable", data);
-
+export function QueryTable({ data }: { data: any }) {
   const marketColor = (market: string) => {
     switch (market) {
       case "offerup":
