@@ -6,7 +6,6 @@ import {
   TableHeader,
   TableRow,
 } from "~/app/_components/ui/table";
-import { QueryResult } from "../lib/typings.d";
 
 export function QueryTable({ data }: { data: any }) {
   const marketColor = (market: string) => {
@@ -43,12 +42,13 @@ export function QueryTable({ data }: { data: any }) {
           <TableRow
             className="cursor-pointer"
             onClick={() => routeToLink(q.link)}
+            key={q.link}
           >
             <TableCell className="font-medium">{q.item}</TableCell>
             <TableCell className="font-bold">
               ${q.price ? q.price : ""}
             </TableCell>
-            <TableCell>{q.city?.name ? q.city.name : ""}</TableCell>
+            <TableCell>{q.location ? q.location : ""}</TableCell>
             <TableCell className={`${marketColor(q.market)}`}>
               {q.market}
             </TableCell>

@@ -85,6 +85,10 @@ function SearchBar() {
     // dispatch(setSelectedCity(city));
   };
 
+  function capitalizeWords(string: string) {
+    return string.replace(/\b(\w)/g, (s) => s.toUpperCase());
+  }
+
   useEffect(() => {
     const filtered = cities
       .filter((city) => {
@@ -117,107 +121,113 @@ function SearchBar() {
     }
   }, [selectedAction]);
 
+  useEffect(() => {
+    console.log(cities);
+  }, [cities]);
+
   return (
     // <div>
     //   <div className="typing-demo">{phrases[currentPhraseIndex]}</div>
     // </div>
 
-    <div className="flex p-1 text-white">
-      <Select value={selectedAction} onValueChange={handleSelectedAction}>
-        <motion.div
-          className="w-auto rounded border-none bg-blue-900 bg-opacity-40 text-2xl font-bold"
-          initial={{ backgroundColor: "rgba(0, 0, 139, .4)" }}
-          whileHover={{ backgroundColor: "rgba(0, 0, 139, 0.2)" }}
-          transition={{ duration: 0.3 }}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-        </motion.div>
-        <SelectContent>
-          <SelectGroup>
-            <SelectItem value="search">Search For</SelectItem>
-            <SelectItem value="track">Track</SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-      <Input
-        className={`w-[300px] animate-pulse border-none bg-transparent text-2xl font-bold focus:border-none active:border-none ${
-          item ? "animate-none" : "animate-pulse"
-        }`}
-        type="text"
-        placeholder="Item..."
-        value={item}
-        onChange={(e) => {
-          dispatch(setItem(e.target.value));
-        }}
-      />
-      {selectedAction == "search" && item ? (
-        <>
-          <Select
-            value={selectedSubAction}
-            onValueChange={handleSelectedSubAction}
+    <div className="flex justify-between p-1 text-white">
+      <div className="flex flex-row justify-start">
+        <Select value={selectedAction} onValueChange={handleSelectedAction}>
+          <motion.div
+            className="w-auto rounded border-none bg-blue-900 bg-opacity-40 text-2xl font-bold"
+            initial={{ backgroundColor: "rgba(0, 0, 139, .4)" }}
+            whileHover={{ backgroundColor: "rgba(0, 0, 139, 0.2)" }}
+            transition={{ duration: 0.3 }}
           >
-            <motion.div
-              className="w-auto rounded border-none bg-blue-900 bg-opacity-40 text-2xl font-bold"
-              initial={{ backgroundColor: "rgba(0, 0, 139, .4)" }}
-              whileHover={{ backgroundColor: "rgba(0, 0, 139, 0.2)" }}
-              transition={{ duration: 0.3 }}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-            </motion.div>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="lt">Less Then</SelectItem>
-                <SelectItem value="bt">Between</SelectItem>
-                <SelectItem value="gt">Greater Than</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <Input
-            className={`w-[100px] border-none bg-transparent text-2xl font-bold focus:border-none active:border-none ${
-              selectedPrice ? "animate-none" : "animate-pulse"
-            }`}
-            type="text"
-            placeholder="$0.00"
-            value={selectedPrice}
-            onChange={(e) => {
-              const newPrice = "$" + e.target.value.replace(/[^0-9.]/g, "");
-              if (newPrice == "$") {
-                dispatch(setSelectedPrice(""));
-              } else {
-                dispatch(setSelectedPrice(newPrice));
-              }
-            }}
-          />
-        </>
-      ) : selectedAction == "track" && item ? (
-        <>
-          <Select
-            value={selectedSubAction}
-            onValueChange={handleSelectedSubAction}
-          >
-            <SelectTrigger className="w-auto border-none bg-blue-600 text-2xl font-bold">
+            <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="lowest">Lowest</SelectItem>
-                <SelectItem value="average">Average</SelectItem>
-                <SelectItem value="highest">Highest</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <div className="mx-4 p-1 text-2xl font-bold">Prices</div>
-        </>
-      ) : null}
-      {selectedPrice ? (
-        <>
-          <div className="my-auto px-4 text-center text-2xl font-bold text-white">
+          </motion.div>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="search">Search For</SelectItem>
+              <SelectItem value="track">Track</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        <Input
+          className={`w-[300px] animate-pulse border-none bg-transparent text-2xl font-bold focus:border-none active:border-none ${
+            item ? "animate-none" : "animate-pulse"
+          }`}
+          type="text"
+          placeholder="Item..."
+          value={item}
+          onChange={(e) => {
+            dispatch(setItem(e.target.value));
+          }}
+        />
+        {/* {selectedAction == "search" && item ? (
+          <>
+            <Select
+              value={selectedSubAction}
+              onValueChange={handleSelectedSubAction}
+            >
+              <motion.div
+                className="w-auto rounded border-none bg-blue-900 bg-opacity-40 text-2xl font-bold"
+                initial={{ backgroundColor: "rgba(0, 0, 139, .4)" }}
+                whileHover={{ backgroundColor: "rgba(0, 0, 139, 0.2)" }}
+                transition={{ duration: 0.3 }}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+              </motion.div>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="lt">Less Then</SelectItem>
+                  <SelectItem value="bt">Between</SelectItem>
+                  <SelectItem value="gt">Greater Than</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            <Input
+              className={`w-[100px] border-none bg-transparent text-2xl font-bold focus:border-none active:border-none ${
+                selectedPrice ? "animate-none" : "animate-pulse"
+              }`}
+              type="text"
+              placeholder="$0.00"
+              value={selectedPrice}
+              onChange={(e) => {
+                const newPrice = "$" + e.target.value.replace(/[^0-9.]/g, "");
+                if (newPrice == "$") {
+                  dispatch(setSelectedPrice(""));
+                } else {
+                  dispatch(setSelectedPrice(newPrice));
+                }
+              }}
+            />
+          </>
+        ) : selectedAction == "track" && item ? (
+          <>
+            <Select
+              value={selectedSubAction}
+              onValueChange={handleSelectedSubAction}
+            >
+              <SelectTrigger className="w-auto border-none bg-blue-600 text-2xl font-bold">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="lowest">Lowest</SelectItem>
+                  <SelectItem value="average">Average</SelectItem>
+                  <SelectItem value="highest">Highest</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            <div className="mx-4 p-1 text-2xl font-bold">Prices</div>
+          </>
+        ) : null} */}
+      </div>
+      <>
+        {/* <div className="my-auto px-4 text-center text-2xl font-bold text-white">
             In
-          </div>
+          </div> */}
+        <div className="justify-end">
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <Button
@@ -228,7 +238,9 @@ function SearchBar() {
                   selectedCity.name ? "animate-none" : "animate-pulse"
                 }`}
               >
-                {selectedCity.name ? selectedCity.name : "Find City"}
+                {selectedCity.name
+                  ? capitalizeWords(selectedCity.name)
+                  : "Find City"}
                 <CaretDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -244,7 +256,7 @@ function SearchBar() {
                 <CommandGroup>
                   {filteredCities.map((city: City) => (
                     <CommandItem
-                      key={city.name + city.lat}
+                      key={city.lon + city.lat}
                       value={city.name}
                       onSelect={(currentValue) => {
                         dispatch(
@@ -265,15 +277,15 @@ function SearchBar() {
                             : "opacity-0",
                         )}
                       />
-                      {city.name}
+                      {capitalizeWords(city.name || "")}
                     </CommandItem>
                   ))}
                 </CommandGroup>
               </Command>
             </PopoverContent>
           </Popover>
-        </>
-      ) : null}
+        </div>
+      </>
     </div>
   );
 }

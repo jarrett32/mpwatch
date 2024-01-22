@@ -1,4 +1,5 @@
 export interface City {
+  name?: string;
   lat: number;
   lon: number;
 }
@@ -18,8 +19,7 @@ export interface CitiesData {
 export type QueryResult = {
   item: string;
   price?: string;
-  city?: City;
+  location?: string;
   market?: "offerup" | "letgo" | "facebook";
-  action?: "buy" | "sell";
   link?: string;
 };

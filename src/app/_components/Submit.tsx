@@ -2,12 +2,9 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { api } from "~/trpc/react";
+import { QueryResult } from "../lib/typings.d";
 import QueryTable from "./QueryTable";
 import { Button } from "./ui/button";
-
-interface getMarketItemsResponse {
-  result: any[];
-}
 
 const Submit = () => {
   const {
@@ -26,40 +23,59 @@ const Submit = () => {
 
   const [high, setHigh] = useState<number | null>(null);
   const [low, setLow] = useState<number | null>(null);
-  const [avg, setAvg] = useState<number | null>(null);
+  const [median, setMedian] = useState<number | null>(null);
 
-  const { data, isLoading, isError, refetch } =
-    api.query.getMarketItems.useQuery<getMarketItemsResponse>(
-      { item, city, state },
-      {
-        enabled: false, // This prevents the query from auto-running
-      },
-    );
+  const { data, isError, refetch } = api.query.getMarketItems.useQuery<
+    QueryResult[]
+  >(
+    { item, city, state },
+    {
+      enabled: false, // This prevents the query from auto-running
+    },
+  );
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
-    refetch();
+    setIsLoading(true);
+    try {
+      await refetch();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const interpretData = (data: QueryResult[]) => {
+    // Sort by data by price
+    const sortedData = data.sort((a, b) => {
+      if (a.price && b.price) {
+        return parseInt(a.price) - parseInt(b.price);
+      }
+      return 0;
+    });
+    setHigh(parseInt(sortedData[sortedData.length - 1]?.price!));
+    setLow(parseInt(sortedData[0]?.price!));
+
+    setMedian(
+      parseInt(
+        sortedData[Math.floor(sortedData.length / 2)]?.price ??
+          sortedData[Math.floor(sortedData.length / 2) - 1]?.price!,
+      ),
+    );
+
+    return sortedData;
   };
 
   useEffect(() => {
-    if (data && data.result) {
-      setMarketItems(data.result);
+    if (data) {
+      const interpretedData = interpretData(data);
+      setMarketItems(interpretedData);
     }
   }, [data]);
 
   const disableSubmit = () => {
-    return (
-      selectedAction === "" ||
-      item === "" ||
-      selectedSubAction === "" ||
-      selectedPrice === "" ||
-      selectedWhere === "" ||
-      selectedCity.name === ""
-    );
+    return item === "" || selectedWhere === "";
   };
-
-  useEffect(() => {
-    console.log({ data });
-  }, [data]);
 
   if (isError) return <div>Error loading data</div>;
 
@@ -74,6 +90,22 @@ const Submit = () => {
         Submit
       </Button>
       <div className="p-4"></div>
+
+      {high && low && median && (
+        <div className="mx-auto flex max-w-xl flex-row items-center justify-around font-bold">
+          <div className="">Low: ${low}</div>
+          <div className="">Med: ${median}</div>
+          <div className="">High: ${high}</div>
+        </div>
+      )}
+
+      {isLoading &&
+        [...Array(5)].map((_, i) => (
+          <div
+            key={i}
+            className="mb-4 w-full animate-pulse rounded bg-slate-900 bg-opacity-80 p-10"
+          ></div>
+        ))}
 
       {data && (
         <div className="mx-auto w-full max-w-5xl">
