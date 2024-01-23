@@ -1,39 +1,27 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import citiesData from "../../../public/cities-new.json";
+import citiesData from "../../../public/cities.json";
+import { City } from "./typings.d";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function getAllCities(): string[] {
-  return Object.values(citiesData).flatMap((state: any) =>
-    Object.keys(state.cities),
-  );
-}
-
-export function getLLFromCity(city: string): any | null {
-  for (const state of Object.values(citiesData)) {
-    if (state.cities[city]) {
-      return state.cities[city];
-    }
-  }
-  return null;
+export function getAllCities(): City[] {
+  return citiesData.cities;
 }
 
 export function getCityFromLL(lat: number, lon: number): string | null {
   let closestCity: string | null = null;
   let minDist = Infinity;
 
-  for (const state of Object.values(citiesData)) {
-    for (const [city, cityInfo] of Object.entries(state.cities)) {
-      const dist = haversineDistance(lat, lon, cityInfo.lat, cityInfo.lon);
-      if (dist < minDist) {
-        minDist = dist;
-        closestCity = city;
-      }
+  citiesData.cities.forEach((city) => {
+    const dist = haversineDistance(lat, lon, city.lat, city.lon);
+    if (dist < minDist) {
+      minDist = dist;
+      closestCity = city.name;
     }
-  }
+  });
 
   return closestCity;
 }

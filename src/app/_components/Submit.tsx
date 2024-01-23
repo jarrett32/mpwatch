@@ -18,9 +18,6 @@ const Submit = () => {
 
   const [marketItems, setMarketItems] = useState<any[] | null>(null);
 
-  const city = "Los Angeles";
-  const state = "California";
-
   const [high, setHigh] = useState<number | null>(null);
   const [low, setLow] = useState<number | null>(null);
   const [median, setMedian] = useState<number | null>(null);
@@ -28,7 +25,7 @@ const Submit = () => {
   const { data, isError, refetch } = api.query.getMarketItems.useQuery<
     QueryResult[]
   >(
-    { item, city, state },
+    { item: item, city: selectedCity.name, state: selectedCity.state },
     {
       enabled: false, // This prevents the query from auto-running
     },
@@ -74,7 +71,7 @@ const Submit = () => {
   }, [data]);
 
   const disableSubmit = () => {
-    return item === "" || selectedWhere === "";
+    return item === "" || selectedCity.name === "" || !selectedCity.lat;
   };
 
   if (isError) return <div>Error loading data</div>;

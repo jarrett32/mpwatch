@@ -25,7 +25,7 @@ import {
   setSelectedWhere,
 } from "~/store/query";
 import { City } from "../lib/typings.d";
-import { cn, getAllCities, getCityFromLL, getLLFromCity } from "../lib/utils";
+import { cn, getAllCities, getCityFromLL } from "../lib/utils";
 import {
   Command,
   CommandEmpty,
@@ -46,27 +46,9 @@ function SearchBar() {
     selectedCity,
   } = useSelector((state: any) => state.query);
 
-  const [cities, setCities] = useState<string[]>([]);
+  const [cities, setCities] = useState<City[]>([]);
   const [filteredCities, setFilteredCities] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    console.log({
-      selectedAction,
-      item,
-      selectedSubAction,
-      selectedPrice,
-      selectedWhere,
-      selectedCity,
-    });
-  }, [
-    selectedAction,
-    item,
-    selectedSubAction,
-    selectedPrice,
-    selectedWhere,
-    selectedCity,
-  ]);
 
   const handleSelectedAction = (value: string) => {
     dispatch(setSelectedAction(value));
@@ -90,17 +72,11 @@ function SearchBar() {
   }
 
   useEffect(() => {
-    const filtered = cities
-      .filter((city) => {
-        return city.toLowerCase().includes(selectedCity.name.toLowerCase());
-      })
-      .map((city) => {
-        const { lat, lng } = getLLFromCity(city);
-        return { name: city, lat, lng };
-      })
-      .slice(0, 5);
+    const filtered = cities.filter((city) => {
+      return city.name.toLowerCase().includes(selectedCity.name.toLowerCase());
+    });
 
-    setFilteredCities(filtered);
+    setFilteredCities(filtered.slice(0, 8));
   }, [selectedCity, cities]);
 
   useEffect(() => {
@@ -122,15 +98,15 @@ function SearchBar() {
   }, [selectedAction]);
 
   useEffect(() => {
-    console.log(cities);
-  }, [cities]);
+    console.log(selectedCity);
+  }, [selectedCity]);
 
   return (
     // <div>
     //   <div className="typing-demo">{phrases[currentPhraseIndex]}</div>
     // </div>
 
-    <div className="flex justify-between p-1 text-white">
+    <div className="flex justify-between rounded bg-slate-900 p-1 text-white">
       <div className="flex flex-row justify-start">
         <Select value={selectedAction} onValueChange={handleSelectedAction}>
           <motion.div
@@ -146,7 +122,9 @@ function SearchBar() {
           <SelectContent>
             <SelectGroup>
               <SelectItem value="search">Search For</SelectItem>
-              <SelectItem value="track">Track</SelectItem>
+              <SelectItem value="soon" disabled>
+                More options coming soon
+              </SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -249,7 +227,14 @@ function SearchBar() {
                 <CommandInput
                   placeholder="Find City"
                   onValueChange={(value) =>
-                    dispatch(setSelectedCity({ ...selectedCity, name: value }))
+                    dispatch(
+                      setSelectedCity({
+                        name: value,
+                        state: "",
+                        lat: 0,
+                        lon: 0,
+                      }),
+                    )
                   }
                 />
                 <CommandEmpty>Not found.</CommandEmpty>
@@ -262,8 +247,8 @@ function SearchBar() {
                         dispatch(
                           setSelectedCity(
                             currentValue === selectedCity.name
-                              ? { name: "", country: "" }
-                              : { ...selectedCity, name: currentValue },
+                              ? { name: "", state: "", lat: 0, lon: 0 }
+                              : city,
                           ),
                         );
                         setOpen(false);
@@ -272,7 +257,7 @@ function SearchBar() {
                       <CheckIcon
                         className={cn(
                           "mr-2 h-4 w-4",
-                          selectedCity === city.name
+                          selectedCity.name === city.name
                             ? "opacity-100"
                             : "opacity-0",
                         )}
