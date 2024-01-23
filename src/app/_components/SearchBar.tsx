@@ -106,7 +106,7 @@ function SearchBar() {
     //   <div className="typing-demo">{phrases[currentPhraseIndex]}</div>
     // </div>
 
-    <div className="flex justify-between rounded bg-slate-900 p-1 text-white">
+    <div className="flex flex-col justify-between space-y-6 rounded bg-transparent p-1 text-white lg:flex-row lg:space-y-0 lg:bg-slate-900">
       <div className="flex flex-row justify-start">
         <Select value={selectedAction} onValueChange={handleSelectedAction}>
           <motion.div
