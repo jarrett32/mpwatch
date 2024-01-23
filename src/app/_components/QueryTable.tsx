@@ -46,7 +46,7 @@ export function QueryTable({ data }: { data: any }) {
           >
             <TableCell className="font-medium">{q.item}</TableCell>
             <TableCell className="font-bold">
-              ${q.price ? q.price : ""}
+              {q.price ? q.price : ""}
             </TableCell>
             <TableCell>{q.location ? q.location : ""}</TableCell>
             <TableCell className={`${marketColor(q.market)}`}>
