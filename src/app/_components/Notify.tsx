@@ -12,7 +12,7 @@ import { Checkbox } from "./ui/checkbox";
 import { Input } from "./ui/input";
 
 const Notify = () => {
-  const [notfiyEnabled, setNotifyEnabled] = useState<Boolean>(false);
+  const [notfiyEnabled, setNotifyEnabled] = useState<boolean>(false);
   const [notificationPeriod, setNotificationPeriod] = useState("1");
   const [emailEnabled, setEmailEnabled] = useState(false);
   const [email, setEmail] = useState("");
