@@ -78,7 +78,6 @@ const Notify = () => {
             <Select
               value={notificationPeriod.toString()}
               onValueChange={setNotificationPeriod}
-              // @ts-ignore
               noIcon={true}
             >
               <SelectTrigger className="mx-2 h-4 w-auto border-none bg-blue-900">
