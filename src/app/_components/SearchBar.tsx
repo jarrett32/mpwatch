@@ -97,10 +97,6 @@ function SearchBar() {
     }
   }, [selectedAction]);
 
-  useEffect(() => {
-    console.log(selectedCity);
-  }, [selectedCity]);
-
   return (
     // <div>
     //   <div className="typing-demo">{phrases[currentPhraseIndex]}</div>
