@@ -38,7 +38,7 @@ export function QueryTable({ data }: { data: any }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data.map((q) => (
+        {data.map((q: any) => (
           <TableRow
             className="cursor-pointer"
             onClick={() => routeToLink(q.link)}

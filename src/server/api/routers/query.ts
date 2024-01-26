@@ -23,7 +23,7 @@ export const queryRouter = createTRPCRouter({
         const response = await axios.get(url, { params });
         return response.data;
       } catch (error) {
-        throw new Error(`Error in HTTP request: ${error.message}`);
+        throw new Error(`Error in HTTP request: ${(error as Error).message}`);
       }
     }),
 

@@ -20,25 +20,21 @@ type SelectTriggerProps = React.ComponentPropsWithoutRef<
 
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
-  SelectTriggerProps
->(({ className, children, ...props }, ref) => (
+  SelectTriggerProps & { noIcon?: boolean } // refactor to extend SelectTriggerProps
+>(({ className, children, noIcon, ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
-    className={cn(
-      "flex h-10 w-full items-center justify-between px-3 py-2 outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
-      className,
-    )}
+    className={cn("your-class-names", className)}
     {...props}
   >
     {children}
-    {props.noIcon ? (
+    {!noIcon && (
       <SelectPrimitive.Icon asChild>
         <ChevronDown className="h-4 w-4 opacity-50" />
       </SelectPrimitive.Icon>
-    ) : null}
+    )}
   </SelectPrimitive.Trigger>
 ));
-SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
 
 const SelectScrollUpButton = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.ScrollUpButton>,
