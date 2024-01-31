@@ -5,8 +5,10 @@ const Header = async () => {
   // const session = await getServerAuthSession();
 
   return (
-    <div className="flex justify-between text-white">
-      <h1 className="p-4 text-6xl font-bold">MarketplaceWatch</h1>
+    <div className="flex text-white md:justify-between">
+      <h1 className="py-4 text-center font-bold md:px-4 lg:text-6xl">
+        MarketplaceWatch
+      </h1>
 
       {/* <div className="flex flex-col items-center justify-center gap-4 p-4 text-white">
         <p className="text-center text-2xl">

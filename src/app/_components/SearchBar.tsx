@@ -104,28 +104,30 @@ function SearchBar() {
 
     <div className="flex flex-col justify-between space-y-6 rounded bg-transparent p-1 text-white lg:flex-row lg:space-y-0 lg:bg-slate-900">
       <div className="flex flex-row justify-start">
-        <Select value={selectedAction} onValueChange={handleSelectedAction}>
-          <motion.div
-            className="w-auto rounded border-none bg-blue-900 bg-opacity-40 text-2xl font-bold"
-            initial={{ backgroundColor: "rgba(0, 0, 139, .4)" }}
-            whileHover={{ backgroundColor: "rgba(0, 0, 139, 0.2)" }}
-            transition={{ duration: 0.3 }}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-          </motion.div>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="search">Search For</SelectItem>
-              <SelectItem value="soon" disabled>
-                More options coming soon
-              </SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <div className="hidden md:block">
+          <Select value={selectedAction} onValueChange={handleSelectedAction}>
+            <motion.div
+              className="w-auto rounded border-none bg-blue-900 bg-opacity-40 text-2xl font-bold"
+              initial={{ backgroundColor: "rgba(0, 0, 139, .4)" }}
+              whileHover={{ backgroundColor: "rgba(0, 0, 139, 0.2)" }}
+              transition={{ duration: 0.3 }}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+            </motion.div>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="search">Search For</SelectItem>
+                <SelectItem value="soon" disabled>
+                  More options coming soon
+                </SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
         <Input
-          className={`w-[300px] animate-pulse border-none bg-transparent text-2xl font-bold focus:border-none active:border-none ${
+          className={`text-md w-[170px] animate-pulse border-none bg-transparent font-bold focus:border-none active:border-none md:w-auto lg:text-2xl ${
             item ? "animate-none" : "animate-pulse"
           }`}
           type="text"
@@ -208,7 +210,7 @@ function SearchBar() {
                 variant="outline"
                 role="combobox"
                 aria-expanded={open}
-                className={`my-auto w-[200px] justify-between border-none bg-transparent text-2xl font-bold text-white hover:bg-transparent hover:text-white ${
+                className={`text-md my-auto w-auto justify-between border-none bg-transparent font-bold text-white hover:bg-transparent hover:text-white md:text-2xl ${
                   selectedCity.name ? "animate-none" : "animate-pulse"
                 }`}
               >
@@ -218,7 +220,7 @@ function SearchBar() {
                 <CaretDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
+            <PopoverContent className="w-auto p-0">
               <Command>
                 <CommandInput
                   placeholder="Find City"

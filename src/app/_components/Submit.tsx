@@ -80,7 +80,7 @@ const Submit = () => {
     <div>
       <Button
         variant="outline"
-        className="border-blue-900 border-opacity-30 bg-transparent px-16 text-white hover:bg-blue-900 hover:bg-opacity-30 hover:text-white"
+        className="border-blue-900 border-opacity-30 bg-transparent px-10 text-white hover:bg-blue-900 hover:bg-opacity-30 hover:text-white md:px-16"
         onClick={handleSubmit}
         disabled={disableSubmit()}
       >
