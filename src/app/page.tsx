@@ -1,8 +1,4 @@
-import Link from "next/link";
-
-import { getServerAuthSession } from "~/server/auth";
 import Header from "./_components/Header";
-import Notify from "./_components/Notify";
 import SearchBar from "./_components/SearchBar";
 import Submit from "./_components/Submit";
 

@@ -2,21 +2,12 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { api } from "~/trpc/react";
-import { QueryResult } from "../lib/typings.d";
+import type { QueryResult } from "../lib/typings.d";
 import QueryTable from "./QueryTable";
 import { Button } from "./ui/button";
 
 const Submit = () => {
-  const {
-    selectedAction,
-    item,
-    selectedSubAction,
-    selectedPrice,
-    selectedWhere,
-    selectedCity,
-  } = useSelector((state: any) => state.query);
-
-  const [marketItems, setMarketItems] = useState<any[] | null>(null);
+  const { item, selectedCity } = useSelector((state: any) => state.query);
 
   const [high, setHigh] = useState<number | null>(null);
   const [low, setLow] = useState<number | null>(null);
@@ -65,8 +56,7 @@ const Submit = () => {
 
   useEffect(() => {
     if (data) {
-      const interpretedData = interpretData(data);
-      setMarketItems(interpretedData);
+      interpretData(data);
     }
   }, [data]);
 
