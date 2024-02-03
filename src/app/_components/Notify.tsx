@@ -75,10 +75,10 @@ const Notify = () => {
             className="flex text-sm font-medium leading-none text-green-500 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
             Notify me updates for this item every
-            {/* <Select
+            <Select
               value={notificationPeriod.toString()}
               onValueChange={setNotificationPeriod}
-              noIcon={true}
+              // noIcon={true}
             >
               <SelectTrigger className="mx-2 h-4 w-auto border-none bg-blue-900">
                 <SelectValue>{notificationPeriod}</SelectValue>
@@ -91,7 +91,7 @@ const Notify = () => {
                   <SelectItem value="30">30</SelectItem>
                 </SelectGroup>
               </SelectContent>
-            </Select>{" "} */}
+            </Select>{" "}
             {notificationPeriod === "1" ? "day" : "days"}
           </label>
           {/* <p className="text-sm text-muted-foreground">

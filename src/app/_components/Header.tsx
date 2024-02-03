@@ -1,9 +1,5 @@
 import React from "react";
-// import { getServerAuthSession } from "~/server/auth";
-
 const Header = async () => {
-  // const session = await getServerAuthSession();
-
   return (
     <div className="flex text-white md:justify-between">
       <h1 className="py-4 text-center font-bold md:px-4 lg:text-6xl">

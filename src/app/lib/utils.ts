@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import citiesData from "../../../public/cities.json";
-import { City } from "./typings.d";
+import type { City } from "./typings.d";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
