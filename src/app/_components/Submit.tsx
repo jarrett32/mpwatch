@@ -9,28 +9,59 @@ import { Button } from "./ui/button";
 const Submit = () => {
   const { item, selectedCity } = useSelector((state: any) => state.query);
 
+  const offerUpQuery = api.query.getOfferUpItems.useQuery(
+    { item, city: selectedCity.name, state: selectedCity.state },
+    { enabled: false },
+  );
+  const marketplaceQuery = api.query.getFacebookMarketplaceItems.useQuery(
+    { item, city: selectedCity.name },
+    { enabled: false },
+  );
+
+  const [results, setResults] = useState<QueryResult[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const [high, setHigh] = useState<number | null>(null);
   const [low, setLow] = useState<number | null>(null);
   const [median, setMedian] = useState<number | null>(null);
 
-  const { data, isError, refetch } = api.query.getMarketItems.useQuery<
-    QueryResult[]
-  >(
-    { item: item, city: selectedCity.name, state: selectedCity.state },
-    {
-      enabled: false, // This prevents the query from auto-running
-    },
-  );
-
-  const [isLoading, setIsLoading] = useState(false);
-
   const handleSubmit = async () => {
     setIsLoading(true);
-    try {
-      await refetch();
-    } finally {
-      setIsLoading(false);
-    }
+    setError(null);
+    setResults([]);
+
+    // Function to handle successful fetch and update state
+    const handleSuccess = (newData) => {
+      if (!newData) return;
+      setResults((prevResults) => [...prevResults, ...newData]);
+      interpretData([...results, ...newData]);
+    };
+
+    // Function to handle fetch error (logs error and does nothing else)
+    const handleError = (error, source) => {
+      console.error(`Error fetching data from ${source}:`, error);
+    };
+
+    // Fetch OfferUp data
+    offerUpQuery
+      .refetch()
+      .then((response) => {
+        handleSuccess(response.data);
+      })
+      .catch((error) => {
+        handleError(error, "OfferUp");
+      });
+
+    // Fetch Marketplace data
+    marketplaceQuery
+      .refetch()
+      .then((response) => {
+        handleSuccess(response.data);
+      })
+      .catch((error) => {
+        handleError(error, "Marketplace");
+      });
   };
 
   const interpretData = (data: QueryResult[]) => {
@@ -54,17 +85,11 @@ const Submit = () => {
     return sortedData;
   };
 
-  useEffect(() => {
-    if (data) {
-      interpretData(data);
-    }
-  }, [data]);
-
   const disableSubmit = () => {
     return item === "" || selectedCity.name === "" || !selectedCity.lat;
   };
 
-  if (isError) return <div>Error loading data</div>;
+  if (error) return <div>Error loading data</div>;
 
   return (
     <div>
@@ -86,6 +111,12 @@ const Submit = () => {
         </div>
       )}
 
+      {results.length > 0 && (
+        <div className="mx-auto w-full max-w-5xl">
+          <QueryTable data={results} />
+        </div>
+      )}
+
       {isLoading &&
         [...Array(5)].map((_, i) => (
           <div
@@ -93,12 +124,6 @@ const Submit = () => {
             className="mb-4 w-full animate-pulse rounded bg-slate-900 bg-opacity-80 p-10"
           ></div>
         ))}
-
-      {data && (
-        <div className="mx-auto w-full max-w-5xl">
-          <QueryTable data={data} />
-        </div>
-      )}
     </div>
   );
 };
