@@ -34,8 +34,11 @@ const Submit = () => {
     // Function to handle successful fetch and update state
     const handleSuccess = (newData) => {
       if (!newData) return;
-      setResults((prevResults) => [...prevResults, ...newData]);
-      interpretData([...results, ...newData]);
+      setResults((currentResults) => {
+        // Now we always work with the most current state
+        const updatedResults = interpretData([...currentResults, ...newData]);
+        return updatedResults;
+      });
     };
 
     // Function to handle fetch error (logs error and does nothing else)
