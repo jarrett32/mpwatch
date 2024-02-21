@@ -8,7 +8,7 @@ export default async function Home() {
       <div className="flex w-full justify-center bg-slate-600 p-2 font-bold text-white">
         ** If you are no facebook entries appear, either the city is not yet
         supported or, facebook has changed their API. Please let us know if you
-        have any issues. **
+        have any issues. It may take up to 15 seconds **
       </div>
       <div className="container flex max-w-6xl flex-col justify-center gap-12 px-4">
         <Header />

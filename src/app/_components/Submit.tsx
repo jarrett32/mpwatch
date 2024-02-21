@@ -41,30 +41,11 @@ const Submit = () => {
       });
     };
 
-    // Function to handle fetch error (logs error and does nothing else)
-    const handleError = (error, source) => {
-      console.error(`Error fetching data from ${source}:`, error);
-    };
+    const offerUpResponse = await offerUpQuery.refetch();
+    handleSuccess(offerUpResponse.data);
 
-    // Fetch OfferUp data
-    offerUpQuery
-      .refetch()
-      .then((response) => {
-        handleSuccess(response.data);
-      })
-      .catch((error) => {
-        handleError(error, "OfferUp");
-      });
-
-    // Fetch Marketplace data
-    marketplaceQuery
-      .refetch()
-      .then((response) => {
-        handleSuccess(response.data);
-      })
-      .catch((error) => {
-        handleError(error, "Marketplace");
-      });
+    const marketplaceResponse = await marketplaceQuery.refetch();
+    handleSuccess(marketplaceResponse.data);
   };
 
   const interpretData = (data: QueryResult[]) => {
