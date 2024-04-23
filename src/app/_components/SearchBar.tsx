@@ -47,11 +47,26 @@ function SearchBar() {
   }
 
   useEffect(() => {
-    const filtered = cities.filter((city) => {
-      return city.name.toLowerCase().includes(selectedCity.name.toLowerCase());
-    });
+    const filteredAndSorted = cities
+      .filter((city) =>
+        city.name.toLowerCase().includes(selectedCity.name.toLowerCase()),
+      )
+      .sort((a, b) => {
+        const aStartsWith = a.name
+          .toLowerCase()
+          .startsWith(selectedCity.name.toLowerCase());
+        const bStartsWith = b.name
+          .toLowerCase()
+          .startsWith(selectedCity.name.toLowerCase());
+        if (aStartsWith && !bStartsWith) {
+          return -1;
+        } else if (!aStartsWith && bStartsWith) {
+          return 1;
+        }
+        return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+      });
 
-    setFilteredCities(filtered.slice(0, 8));
+    setFilteredCities(filteredAndSorted.slice(0, 8));
   }, [selectedCity, cities]);
 
   useEffect(() => {
