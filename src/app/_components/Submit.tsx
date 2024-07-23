@@ -44,6 +44,8 @@ const Submit = () => {
     const offerUpResponse = await offerUpQuery.refetch();
     handleSuccess(offerUpResponse.data);
 
+    setIsLoading(false);
+
     const marketplaceResponse = await marketplaceQuery.refetch();
     handleSuccess(marketplaceResponse.data);
   };
